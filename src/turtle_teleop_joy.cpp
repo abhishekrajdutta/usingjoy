@@ -17,13 +17,13 @@ public:
 
 private:
   void joyCallback(const sensor_msgs::Joy::ConstPtr& joy);
-  
+
   ros::NodeHandle nh_;
 
   int linear_, angular_,count1=0,count2=0,count3=0,count4=0;
   //std_msgs::int8 count = 1;
   double l_scale_, a_scale_;
-  double init_x=3,init_y=1.5,initYaw=(180+55)*3.14/180;
+  double init_x=3,init_y=-2.5,initYaw=(45)*3.14/180;
   //std_msgs::Float64 deg;
   std_msgs::Float64 deg;
   ros::Publisher vel_pub_;
@@ -36,7 +36,7 @@ private:
   std::stringstream ss;
   gazebo_msgs::ModelState initState;
 
-  
+
 };
 
 
@@ -55,9 +55,9 @@ TeleopTurtle::TeleopTurtle():
   //rot_pub_ = nh_.advertise<std_msgs::String>("/ron/joint1_position_controller/command", 1000);
   //vel_pub_ = nh_.advertise<geometry_msgs::Twist>("/cmd_vel_mux/input/teleop", 1);
 
-  joy_sub_ = nh_.subscribe<sensor_msgs::Joy>("joy", 10, &TeleopTurtle::joyCallback, this);  
-  
-    
+  joy_sub_ = nh_.subscribe<sensor_msgs::Joy>("joy", 10, &TeleopTurtle::joyCallback, this);
+
+
   //chatter_pub = nh_.advertise<std_msgs::Float64>("/ron/joint1_position_controller/command", 1000);
 
   gazebo_state_reset_pub = nh_.advertise<gazebo_msgs::ModelState>("/gazebo/set_model_state",1);
@@ -76,7 +76,7 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   vel_pub_.publish(twist);
 
   //chatter_pub.publish(deg);
-  
+
   //********start button initialises ptam**********
   if(joy->buttons[7]==1)
   {
@@ -86,7 +86,7 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   ptam_com_pub.publish(resetString);
   ptam_com_pub.publish(resetString);
   ptam_com_pub.publish(resetString);
-  
+
   initState.model_name = "ron";
   //initState.model_name = "mobile_base";
   initState.reference_frame = "world";
@@ -101,11 +101,11 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   twist.linear.x=-0.2;
   clock_t t = clock();
   ros::Rate r(10);
-  while(((float) (clock() - t))/CLOCKS_PER_SEC < 0.2) 
+  while(((float) (clock() - t))/CLOCKS_PER_SEC < 0.2)
   {
     vel_pub_.publish(twist);
-    
-  
+
+
     r.sleep();
   }
   ros::Rate(1).sleep();
@@ -117,73 +117,73 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   //**********************home button moves robot along trajectory planned beforehand
  /* if(joy->buttons[1]==1)
   {
-    
+
 
   twist.linear.x=0;
   twist.angular.z=0;
   clock_t t = clock();
   ros::Rate r(10);
-  for(int i=0;i<34;i++) 
+  for(int i=0;i<34;i++)
   {
-    vel_pub_.publish(twist);  
+    vel_pub_.publish(twist);
     r.sleep();
   }
   ros::Rate(1).sleep();
-    
 
-  }  
+
+  }
 */
 
   if(joy->buttons[8]==1) //homescan
   {
-    
+
 
   twist.linear.x=0.95;
   twist.angular.z=+0.6;
   clock_t t = clock();
-  ros::Rate r(80); 	
+  ros::Rate r(80);
   for(int i=0;i<10;i++)
   {
-    vel_pub_.publish(twist);  
+    vel_pub_.publish(twist);
     r.sleep();
-    
+
   }
   ros::Rate(1).sleep();
   twist.linear.x=0;
   twist.angular.z=0;
-  action1=0;  
-  
+  action1=0;
+
   }
 
   if(joy->buttons[3]==1)
   {
-    
+
 
   twist.linear.x=0.85;
-  
+
   clock_t t = clock();
   ros::Rate r(80);
   for(int i=0;i<113;i++)
   {
-    vel_pub_.publish(twist);  
+    vel_pub_.publish(twist);
     r.sleep();
-    
+
   }
   ros::Rate(1).sleep();
   twist.linear.x=0;
   twist.angular.z=0;
-  action1=1;  
-  
+  action1=1;
+
   }
 
 
  if(action1==1)  //right turn
   {
-    
+
   twist.linear.x=0.75;
   twist.angular.z=-0.53;
-  
-  
+
+
   clock_t t = clock();
   ros::Rate r(100);
   for(int i=0;i<515;i++)
@@ -197,40 +197,40 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   twist.linear.x=0;
   twist.angular.z=0;
   action1=0;
-  action2=1;  
+  action2=1;
   ROS_INFO("%d",count1);
 
   if(action2==1)
   {
-    
+
 
   twist.linear.x=0.85;
-  
+
   clock_t t = clock();
   ros::Rate r(80);
   for(int i=0;i<113;i++)
   {
-    vel_pub_.publish(twist);  
+    vel_pub_.publish(twist);
     r.sleep();
-    
+
   }
   ros::Rate(1).sleep();
   twist.linear.x=0;
   twist.angular.z=0;
   action2=0;
-  action3=1;  
-  
+  action3=1;
+
   }
 
   }
 
   if(action3==1)  //left turn
   {
-    
+
   twist.linear.x=0.75;
   twist.angular.z=0.53;
-  
-  
+
+
   clock_t t = clock();
   ros::Rate r(100);
   for(int i=0;i<500;i++)
@@ -244,88 +244,88 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   twist.linear.x=0;
   twist.angular.z=0;
   action3=0;
-  action4=1;  
+  action4=1;
   ROS_INFO("%d",count1);
 
   }
 
   if(action4==1)
   {
-    
+
 
   twist.linear.x=0.85;
-  
+
   clock_t t = clock();
   ros::Rate r(80);
   for(int i=0;i<113;i++)
   {
-    vel_pub_.publish(twist);  
+    vel_pub_.publish(twist);
     r.sleep();
-    
+
   }
   ros::Rate(1).sleep();
   twist.linear.x=0;
   twist.angular.z=0;
   action2=0;
-  action4=0; 
-  action5=1; 
-  
+  action4=0;
+  action5=1;
+
   }
 
 //*********************first long straight**************************
 
   if(action5==1)
   {
-    
+
 
   twist.linear.x=0.85;
-  
+
   clock_t t = clock();
   ros::Rate r(80);
   for(int i=0;i<113;i++)
   {
-    vel_pub_.publish(twist);  
+    vel_pub_.publish(twist);
     r.sleep();
-    
+
   }
   ros::Rate(1).sleep();
   twist.linear.x=0;
   twist.angular.z=0;
   action2=0;
   action5=0;
-  action6=1;  
-  
+  action6=1;
+
   }
 
   if(action6==1)
   {
-    
+
 
   twist.linear.x=0.85;
-  
+
   clock_t t = clock();
   ros::Rate r(80);
   for(int i=0;i<113;i++)
   {
-    vel_pub_.publish(twist);  
+    vel_pub_.publish(twist);
     r.sleep();
-    
+
   }
   ros::Rate(1).sleep();
   twist.linear.x=0;
   twist.angular.z=0;
   action2=0;
-  action6=0;  
+  action6=0;
   action7=1;
   }
-  
+
   if(action7==1)  //left turn
   {
-    
+
   twist.linear.x=0.8;
   twist.angular.z=0.53;
-  
-  
+
+
   clock_t t = clock();
   ros::Rate r(100);
   for(int i=0;i<205;i++)
@@ -339,40 +339,40 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   twist.linear.x=0;
   twist.angular.z=0;
   action7=0;
-  action8=1;  
+  action8=1;
   ROS_INFO("%d",count1);
 
   }
 
   if(action8==1)
   {
-    
+
 
   twist.linear.x=0.85;
-  
+
   clock_t t = clock();
   ros::Rate r(80);
   for(int i=0;i<235;i++)
   {
-    vel_pub_.publish(twist);  
+    vel_pub_.publish(twist);
     r.sleep();
-    
+
   }
   ros::Rate(1).sleep();
   twist.linear.x=0;
   twist.angular.z=0;
   action2=0;
-  action8=0;  
+  action8=0;
   action9=1;
   }
 
   if(action9==1)  //right turn at wall
   {
-    
+
   twist.linear.x=0.8;
   twist.angular.z=-0.53;
-  
-  
+
+
   clock_t t = clock();
   ros::Rate r(100);
   for(int i=0;i<205;i++)
@@ -386,41 +386,41 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   twist.linear.x=0;
   twist.angular.z=0;
   action9=0;
-  action10=1;  
+  action10=1;
   ROS_INFO("%d",count1);
 
   }
 
   if(action10==1)
   {
-    
+
 
   twist.linear.x=0.85;
-  
+
   clock_t t = clock();
   ros::Rate r(80);
   for(int i=0;i<200;i++)
   {
-    vel_pub_.publish(twist);  
+    vel_pub_.publish(twist);
     r.sleep();
-    
+
   }
   ros::Rate(1).sleep();
   twist.linear.x=0;
   twist.angular.z=0;
   action2=0;
-  action10=0;  
+  action10=0;
   action11=1;
   }
 
 
   if(action11==1)  //left turn
   {
-    
+
   twist.linear.x=0.75;
   twist.angular.z=0.53;
-  
-  
+
+
   clock_t t = clock();
   ros::Rate r(100);
   for(int i=0;i<500;i++)
@@ -434,40 +434,40 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   twist.linear.x=0;
   twist.angular.z=0;
   action11=0;
-  action12=1;  
+  action12=1;
   ROS_INFO("%d",count1);
 
   }
 
   if(action12==1)
   {
-    
+
 
   twist.linear.x=0.85;
-  
+
   clock_t t = clock();
   ros::Rate r(80);
   for(int i=0;i<160;i++)
   {
-    vel_pub_.publish(twist);  
+    vel_pub_.publish(twist);
     r.sleep();
-    
+
   }
   ros::Rate(1).sleep();
   twist.linear.x=0;
   twist.angular.z=0;
   action2=0;
-  action12=0;  
+  action12=0;
   action13=1;
   }
 
   if(action13==1)  //right turn after wall u turn
   {
-    
+
   twist.linear.x=0.8;
   twist.angular.z=-0.53;
-  
-  
+
+
   clock_t t = clock();
   ros::Rate r(100);
   for(int i=0;i<205;i++)
@@ -481,40 +481,40 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   twist.linear.x=0;
   twist.angular.z=0;
   action13=0;
-  action14=1;  
+  action14=1;
   ROS_INFO("%d",count1);
 
   }
 
   if(action14==1)
   {
-    
+
 
   twist.linear.x=0.85;
-  
+
   clock_t t = clock();
   ros::Rate r(80);
   for(int i=0;i<100;i++)
   {
-    vel_pub_.publish(twist);  
+    vel_pub_.publish(twist);
     r.sleep();
-    
+
   }
   ros::Rate(1).sleep();
   twist.linear.x=0;
   twist.angular.z=0;
   action2=0;
-  action14=0;  
+  action14=0;
   action15=1;
   }
 
   if(action15==1)  //left turn
   {
-    
+
   twist.linear.x=0.8;
   twist.angular.z=0.53;
-  
-  
+
+
   clock_t t = clock();
   ros::Rate r(100);
   for(int i=0;i<195;i++)
@@ -528,7 +528,7 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   twist.linear.x=0;
   twist.angular.z=0;
   action15=0;
-  action16=1;  
+  action16=1;
   ROS_INFO("%d",count1);
 
   }
@@ -536,33 +536,33 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
 
   if(action16==1)
   {
-    
+
 
   twist.linear.x=0.85;
-  
+
   clock_t t = clock();
   ros::Rate r(80);
   for(int i=0;i<600;i++)
   {
-    vel_pub_.publish(twist);  
+    vel_pub_.publish(twist);
     r.sleep();
-    
+
   }
   ros::Rate(1).sleep();
   twist.linear.x=0;
   twist.angular.z=0;
   action2=0;
-  action16=0;  
+  action16=0;
   action17=1;
   }
 
   if(action17==1)  //left turn
   {
-    
+
   twist.linear.x=0.8;
   twist.angular.z=0.53;
-  
-  
+
+
   clock_t t = clock();
   ros::Rate r(100);
   for(int i=0;i<200;i++)
@@ -576,40 +576,40 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   twist.linear.x=0;
   twist.angular.z=0;
   action17=0;
-  action18=1;  
+  action18=1;
   ROS_INFO("%d",count1);
 
   }
 
   if(action18==1)
   {
-    
+
 
   twist.linear.x=0.85;
-  
+
   clock_t t = clock();
   ros::Rate r(80);
   for(int i=0;i<350;i++)
   {
-    vel_pub_.publish(twist);  
+    vel_pub_.publish(twist);
     r.sleep();
-    
+
   }
   ros::Rate(1).sleep();
   twist.linear.x=0;
   twist.angular.z=0;
   action2=0;
-  action18=0;  
+  action18=0;
   action19=1;
   }
-  
+
   if(action19==1)  //left turn
   {
-    
+
   twist.linear.x=0.8;
   twist.angular.z=0.53;
-  
-  
+
+
   clock_t t = clock();
   ros::Rate r(100);
   for(int i=0;i<180;i++)
@@ -623,31 +623,31 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   twist.linear.x=0;
   twist.angular.z=0;
   action19=0;
-  action20=1;  
+  action20=1;
   ROS_INFO("%d",count1);
 
   }
 
   if(action20==1)
   {
-    
+
 
   twist.linear.x=0.85;
-  
+
   clock_t t = clock();
   ros::Rate r(80);
   for(int i=0;i<250;i++)
   {
-    vel_pub_.publish(twist);  
+    vel_pub_.publish(twist);
     r.sleep();
-    
+
   }
   ros::Rate(1).sleep();
   twist.linear.x=0;
   twist.angular.z=0;
   action2=0;
-  action20=0;  
-  
+  action20=0;
+
   }
 
 
@@ -655,7 +655,7 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
 
   /*if(action3==1)
   {
-    
+
 
   twist.linear.x=+0.5;
   twist.angular.z=-0.35;
@@ -672,19 +672,19 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   twist.angular.z=0;
   action3=0;
   action4=1;
-  ROS_INFO("%d",count3);  
+  ROS_INFO("%d",count3);
 
   }*/
 
   if(action4==1)
   {
-    
+
 
   twist.linear.x=+0.5;//a smaller value makes the bot go slower
-  
+
   clock_t t = clock();
   ros::Rate r(10);
-  for(int i=0;i<70;i++) //this value continues the number of times the loop runs 
+  for(int i=0;i<70;i++) //this value continues the number of times the loop runs
   {
     vel_pub_.publish(twist);
     r.sleep();
@@ -698,9 +698,9 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
 
   }
 
-  
 
-  
+
+
 
 
     //ROS_INFO("%s    \n", msg.data.c_str());
@@ -720,8 +720,7 @@ int main(int argc, char** argv)
   TeleopTurtle teleop_turtle;
 
 
- 
-  
+
+
   ros::spin();
 }
-

@@ -16,13 +16,13 @@ public:
 
 private:
   void joyCallback(const sensor_msgs::Joy::ConstPtr& joy);
-  
+
   ros::NodeHandle nh_;
 
   int linear_, angular_;
   //std_msgs::int8 count = 1;
   double l_scale_, a_scale_;
-  
+
   //std_msgs::Float64 deg;
   std_msgs::Float64 deg;
   //ros::Publisher vel_pub_;
@@ -35,7 +35,7 @@ private:
   //std::stringstream ss;
   //gazebo_msgs::ModelState initState;
 
-  
+
 };
 
 
@@ -54,10 +54,10 @@ TeleopTurtle::TeleopTurtle():
   //rot_pub_ = nh_.advertise<std_msgs::String>("/ron/joint1_position_controller/command", 1000);
   //vel_pub_ = nh_.advertise<geometry_msgs::Twist>("/cmd_vel_mux/input/teleop", 1);
 
-  joy_sub_ = nh_.subscribe<sensor_msgs::Joy>("joy", 10, &TeleopTurtle::joyCallback, this);  
-  
-    
-  chatter_pub = nh_.advertise<std_msgs::Float64>("/ron/joint1_position_controller/command", 1000);
+  joy_sub_ = nh_.subscribe<sensor_msgs::Joy>("joy", 10, &TeleopTurtle::joyCallback, this);
+
+
+  chatter_pub = nh_.advertise<std_msgs::Float64>("/ron/joint1_position_controller/commandersssssssssss", 1000);
 
   //gazebo_state_reset_pub = nh_.advertise<gazebo_msgs::ModelState>("/gazebo/set_model_state",1);
 
@@ -73,11 +73,11 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   twist.angular.z = a_scale_*joy->axes[angular_];
   twist.linear.x = l_scale_*joy->axes[linear_];
   vel_pub_.publish(twist);*/
-  deg.data = joy->axes[3];  
-  
+  deg.data = joy->axes[3];
+
   chatter_pub.publish(deg);
 
-  
+
 
 
     //ROS_INFO("%s    \n", msg.data.c_str());
@@ -93,7 +93,7 @@ int main(int argc, char** argv)
 {
   ros::init(argc, argv, "teleop_turtle");
   TeleopTurtle teleop_turtle;
- 
-  
+
+
   ros::spin();
 }
