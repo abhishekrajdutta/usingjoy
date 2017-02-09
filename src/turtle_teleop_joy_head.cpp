@@ -57,7 +57,7 @@ TeleopTurtle::TeleopTurtle():
   joy_sub_ = nh_.subscribe<sensor_msgs::Joy>("joy", 10, &TeleopTurtle::joyCallback, this);
 
 
-  chatter_pub = nh_.advertise<std_msgs::Float64>("/ron/joint1_position_controller/commandersssssssssss", 1000);
+  chatter_pub = nh_.advertise<std_msgs::Float64>("/ron/joint1_position_controller/commander", 1000);
 
   //gazebo_state_reset_pub = nh_.advertise<gazebo_msgs::ModelState>("/gazebo/set_model_state",1);
 

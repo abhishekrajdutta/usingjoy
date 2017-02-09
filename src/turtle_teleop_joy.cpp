@@ -23,7 +23,8 @@ private:
   int linear_, angular_,count1=0,count2=0,count3=0,count4=0;
   //std_msgs::int8 count = 1;
   double l_scale_, a_scale_;
-  double init_x=3,init_y=-2.5,initYaw=(45)*3.14/180;
+  // double init_x=3,init_y=-2.5,initYaw=(45)*3.14/180;  //big map
+  double init_x=-4,init_y=-1,initYaw=(65)*3.14/180;  //small map
   //std_msgs::Float64 deg;
   std_msgs::Float64 deg;
   ros::Publisher vel_pub_;
@@ -32,6 +33,7 @@ private:
   ros::Publisher chatter_pub;
   ros::Publisher gazebo_state_reset_pub;
   ros::Publisher ptam_com_pub;
+  ros::Publisher zero_pub;
   std_msgs::String msg,resetString,spaceString;
   std::stringstream ss;
   gazebo_msgs::ModelState initState;
@@ -101,7 +103,7 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   twist.linear.x=-0.2;
   clock_t t = clock();
   ros::Rate r(10);
-  while(((float) (clock() - t))/CLOCKS_PER_SEC < 0.2)
+  while(((float) (clock() - t))/CLOCKS_PER_SEC < 0.1)
   {
     vel_pub_.publish(twist);
 
@@ -113,6 +115,13 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
 
   }
 
+  // if(joy->buttons[8]==1)
+  // {
+  //   zero_pub = nh_.advertise<std_msgs::Float64>("/ron/joint1_position_controller/command", 1000);
+  //   deg.data = 0.00;
+  //   zero_pub.publish(deg);
+  // }
+  //
 
   //**********************home button moves robot along trajectory planned beforehand
  /* if(joy->buttons[1]==1)
@@ -134,7 +143,7 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   }
 */
 
-  if(joy->buttons[8]==1) //homescan
+  if(joy->buttons[9]==1) //homescan
   {
 
 
