@@ -4,18 +4,19 @@ import rospy
 import actionlib
 from nav_msgs.msg import Odometry
 import numpy as np
-from move_base_msgs.msg import *
+from move_base_msgs.msg import MoveBaseAction
+from move_base_msgs.msg import MoveBaseSimpleGoal
 
 odom = Odometry()
-def set_goal(a,b,x,y,z,w):
+def set_goal():
     goal = MoveBaseSimpleGoal()
-    goal.target_pose.pose.position.x = a
-    goal.target_pose.pose.position.y = b
-    goal.target_pose.pose.orientation.x = x
-    goal.target_pose.pose.orientation.y = y
-    goal.target_pose.pose.orientation.z = z
-    goal.target_pose.pose.orientation.w = w
-    goal.target_pose.header.frame_id = 'odom'
+    goal.target_pose.pose.position.x = 5
+    goal.target_pose.pose.position.y = 0
+    goal.target_pose.pose.orientation.x = 0
+    goal.target_pose.pose.orientation.y = 0
+    goal.target_pose.pose.orientation.z = 0
+    goal.target_pose.pose.orientation.w = 1
+    goal.target_pose.header.frame_id = 'map'
     #goal.target_pose.header.child_frame_id = 'base_link'
     goal.target_pose.header.stamp = rospy.Time.now()
 
@@ -63,7 +64,7 @@ def simple_move():
     sac = actionlib.SimpleActionClient('move_base', MoveBaseAction )
 
     #create goal
-    #goal = MoveBaseGoal()
+    goal = MoveBaseSimpleGoal()
 
     #use self?
     #set goal
@@ -77,14 +78,12 @@ def simple_move():
 
 
 
+    g2=set_goal()
+    send_goal(sac,g2)
+    rospy.loginfo('goal sent')
 
-    for i in range(1,4):
-        g2=set_odom_goal(odom,d1,-d2)
-        send_goal(sac,g2)
-        rospy.loginfo('goal sent')
-
-        g2=set_odom_goal(odom,d1,d2)
-        send_goal(sac,g2)
+        # g2=set_odom_goal(odom,d1,d2)
+        # send_goal(sac,g2)
 
 
 

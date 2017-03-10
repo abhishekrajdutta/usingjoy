@@ -1,5 +1,6 @@
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <sensor_msgs/Joy.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Float64.h>
@@ -34,6 +35,7 @@ private:
   ros::Publisher gazebo_state_reset_pub;
   ros::Publisher ptam_com_pub;
   ros::Publisher zero_pub;
+  ros::Publisher pose_pub;
   std_msgs::String msg,resetString,spaceString;
   std::stringstream ss;
   gazebo_msgs::ModelState initState;
@@ -65,6 +67,7 @@ TeleopTurtle::TeleopTurtle():
   gazebo_state_reset_pub = nh_.advertise<gazebo_msgs::ModelState>("/gazebo/set_model_state",1);
 
   ptam_com_pub = nh_.advertise<std_msgs::String>("/vslam/key_pressed",1);
+  pose_pub = nh_.advertise<geometry_msgs::PoseWithCovarianceStamped>("/initialpose",1);
 
   //rostopic pub -1 /ron/joint1_position_controller/command std_msgs/Float64 "data: 1.5"
 
@@ -73,6 +76,7 @@ TeleopTurtle::TeleopTurtle():
 void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
 {
   geometry_msgs::Twist twist;
+  geometry_msgs::PoseWithCovarianceStamped initPose;
   twist.angular.z = a_scale_*joy->axes[angular_];
   twist.linear.x = l_scale_*joy->axes[linear_];
   vel_pub_.publish(twist);
@@ -112,6 +116,20 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   }
   ros::Rate(1).sleep();
   ptam_com_pub.publish(spaceString);
+
+  initPose.header.frame_id = "/map";
+  initPose.pose.pose.position.x = 1.53070878983;
+  initPose.pose.pose.position.y = -3.94104194641;
+  initPose.pose.pose.position.z = 0.0;
+  initPose.pose.pose.orientation.z = 1;
+  initPose.pose.pose.orientation.w = 0.1;
+  // initPose.pose.covariance[36] = {0.25, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.25, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.06853891945200942};
+  initPose.pose.covariance[0]=0.25;
+  initPose.pose.covariance[7]=0.25;
+  initPose.pose.covariance[35]=0.06853891945200942;
+  pose_pub.publish(initPose);
+
+
 
   }
 
