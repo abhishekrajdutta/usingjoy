@@ -32,6 +32,7 @@ private:
   ros::Publisher rot_pub_;
   ros::Subscriber joy_sub_;
   ros::Publisher chatter_pub;
+  ros::Publisher reset_pub;
   ros::Publisher gazebo_state_reset_pub;
   ros::Publisher ptam_com_pub;
   ros::Publisher zero_pub;
@@ -62,7 +63,8 @@ TeleopTurtle::TeleopTurtle():
   joy_sub_ = nh_.subscribe<sensor_msgs::Joy>("joy", 10, &TeleopTurtle::joyCallback, this);
 
 
-  //chatter_pub = nh_.advertise<std_msgs::Float64>("/ron/joint1_position_controller/command", 1000);
+  reset_pub = nh_.advertise<std_msgs::Float64>("/ron/joint1_position_controller/command", 1000);
+  chatter_pub = nh_.advertise<std_msgs::Float64>("/ron/joint1_position_controller/reset", 1000);
 
   gazebo_state_reset_pub = nh_.advertise<gazebo_msgs::ModelState>("/gazebo/set_model_state",1);
 
@@ -81,12 +83,20 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   twist.linear.x = l_scale_*joy->axes[linear_];
   vel_pub_.publish(twist);
 
+
+
   //chatter_pub.publish(deg);
 
   //********start button initialises ptam**********
   if(joy->buttons[7]==1)
   {
-    resetString.data = "r";
+
+  deg.data=0;
+  chatter_pub.publish(deg);
+  ros::Rate(2).sleep();
+  deg.data=0;
+  reset_pub.publish(deg);
+  resetString.data = "r";
   spaceString.data = "Space";
   ptam_com_pub.publish(resetString);
   ptam_com_pub.publish(resetString);
@@ -128,6 +138,7 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   initPose.pose.covariance[7]=0.25;
   initPose.pose.covariance[35]=0.06853891945200942;
   pose_pub.publish(initPose);
+
 
 
 
