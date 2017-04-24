@@ -31,15 +31,15 @@ def dist(corner,x,y):
 		d.append(2.7-y)
 		d.append(5.3-y)
 
-	elif corner==1:
+	if corner==1:
 		d.append(2.7-x)
 		d.append(5.3-x)
 
-	elif corner==2:
+	if corner==2:
 		d.append(y+2.7)
 		d.append(y+5.3)
 
-	elif corner==3:
+	if corner==3:
 		d.append(x+2.7)
 		d.append(x+5.3)
 	
@@ -92,8 +92,8 @@ def turner(d,x,y,yaw):
 	return look
 
 def odom_callback(msg):
-	pub = rospy.Publisher('/ron/joint1_position_controller/command', Float64, queue_size=10)
-	
+	global corner
+	pub = rospy.Publisher('/ron/joint1_position_controller/command', Float64, queue_size=10)	
 	distance = dist(corner%4,msg.pose.pose.position.x,msg.pose.pose.position.y)
 	quaternion1 = (msg.pose.pose.orientation.x,msg.pose.pose.orientation.y, msg.pose.pose.orientation.z,msg.pose.pose.orientation.w)
 	euler = tf.transformations.euler_from_quaternion(quaternion1)
@@ -102,6 +102,7 @@ def odom_callback(msg):
 	pub.publish(heading)
 
 def reset_callback(msg):
+	global corner
 	corner=0	
 	rospy.loginfo(corner)
 	
